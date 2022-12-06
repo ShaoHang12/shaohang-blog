@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xsh.blog.business.article_collect.mapper.ArticleCollectMapper">
+
+    <select id="getPage" resultType="com.xsh.blog.business.article.vo.ArticleVo">
+        select D.*,B.article_category_name,SUM(C.article_id),U.nickname,U.avatar as comment
+        from article_collect as A
+                left join article as D on A.article_id = D.article_id
+                 left join article_category as B on D.article_category_id = B.article_category_id
+                 left join article_comment as C on A.article_id = C.article_id
+                 left join User as U on A.user_id = U.user_id
+            ${ew.customSqlSegment}
+        GROUP BY C.article_id
+    </select>
+</mapper>
