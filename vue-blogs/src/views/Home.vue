@@ -2,6 +2,15 @@
   <div class="home">
     <banner isHome="true"></banner>
     <div class="site-content animate">
+      <div class="search">
+        <el-input
+          v-model="search"
+          placeholder="请输入要查找的博客"
+          class="input-with-select"
+          @keyup.enter.native="submitForm(search)"
+        >
+        </el-input>
+      </div>
       <!--通知栏-->
       <div class="notify">
         <div class="search-result" v-if="hideSlogan">
@@ -52,6 +61,7 @@ export default {
       postList: [],
       currPage: 1,
       hasNextPage: false,
+      search:'',
     };
   },
   components: {
@@ -89,9 +99,9 @@ export default {
     fetchList() {
       console.log("12312");
       const form = {
-        'articleTitle':this.$route.params.words,
-        'articleCg':"1"
-      }
+        articleTitle: this.$route.params.words,
+        articleCg: "1",
+      };
       fetchList(form)
         .then((res) => {
           console.log("res", res.data);
@@ -111,6 +121,14 @@ export default {
         this.hasNextPage = res.data.hasNextPage;
       });
     },
+    submitForm(search){
+       this.$router.push(`/search/${search}`)
+    }
+  },
+  watch:{
+    $route() {
+     location.reload();
+   },
   },
   mounted() {
     // this.fetchFocus();
