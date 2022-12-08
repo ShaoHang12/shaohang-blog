@@ -3,11 +3,11 @@
     <div class="banner-img" >
       <template v-if="isHome">
         <div class="focusinfo">
-          <div class="header-tou">
-            <router-link to="/"><img src="@/assets/author.jpg" /></router-link>
+          <div class="header-tou" style="font-size: 30px; color: white;">
+            ShaoHangBlog
           </div>
           <div class="header-info">
-            <p>桃李春风一杯酒，江湖夜雨十年灯。</p>
+            <p>十八拍兮曲虽终,响有余兮思无穷</p>
           </div>
           <div class="top-social">
             <div v-for="item in socials" :key="item.id" :title="item.title">
@@ -67,13 +67,13 @@ export default {
 
 <style scoped lang="less">
 .banner-img {
-    background-image: url("../assets/null198d39ab0dbcc900.jpg");
+    background-image: url("../assets/206.jpg");
 }
 #banner {
   position: relative;
   margin-top: 80px;
   width: 100%;
-  height: 600px;
+  height: 650px;
   .banner-img {
     width: inherit;
     height: inherit;
@@ -88,7 +88,7 @@ export default {
     }
   }
   &.home-banner {
-    height: 550px;
+    height: 580px;
     .banner-img {
       background-position: center center;
       background-repeat: no-repeat;

@@ -29,6 +29,12 @@
 
     <div class="block pagination">
       <el-pagination
+        @prev-click="prePage"
+        @next-click="nextPage"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pagenum"
+        :page-size="pagesize"
         background="#f9f9f9"
         layout="prev, pager, next"
         :total="total"
@@ -56,10 +62,7 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img
-              :src="form.articleCover"
-              class="avatar"
-            />
+            <img :src="form.articleCover" class="avatar" />
           </el-upload>
         </el-form-item>
 
@@ -106,7 +109,6 @@
   </div>
 </template>
 
-
 <script>
 import "@wangeditor/editor/dist/css/style.css";
 import { Message } from "element-ui";
@@ -137,14 +139,10 @@ export default {
       form: {},
       dialogFormVisible: false,
       total: 0,
-      queryParam: {
-        pagesize: 10,
-        pagenum: 1,
-      },
+      pagesize: 10,
+      pagenum: 1,
       tableData: [],
-
       editor: {},
-
       html: "<p>hello</p>",
       toolbarConfig: {},
       mode: "default",
@@ -156,7 +154,7 @@ export default {
             server: "http://localhost:8080/business/file/upload",
             fieldName: "file",
 
-            onFailed: function (file, res) {
+            onFailed: function(file, res) {
               console.log(res);
             },
           },
@@ -178,9 +176,6 @@ export default {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
     toUserView() {
       console.log("toUserView");
       this.$router.push({ name: "userManager" });
@@ -195,7 +190,28 @@ export default {
       this.dialogFormVisible = false;
       this.form = {};
     },
-
+    //前进
+    prePage() {
+      this.pagenum -= 1;
+      console.log(this.pagenum, "前进");
+      this.getUserList();
+    },
+    //后退
+    nextPage() {
+      this.pagenum += 1;
+      console.log(this.pagenum, "后退");
+      this.getUserList();
+    },
+    // 初始页currentPage、初始每页数据数pagesize和数据data
+    handleSizeChange(size) {
+      this.pagesize = size;
+      this.getUserList();
+    },
+    handleCurrentChange(currentPage) {
+      console.log(currentPage);
+      this.pagenum = currentPage;
+      this.getUserList();
+    },
     // 删除用户信息
     async deleteUser(id) {
       console.log("delete");
@@ -250,16 +266,16 @@ export default {
       this.form = {};
       const { data: res } = await fetchList({
         params: {
-          pagesize: this.queryParam.pagesize,
-          pagenum: this.queryParam.pagenum,
+          pagesize: this.pagesize,
+          pagenum: this.pagenum,
         },
       });
       this.tableData = res.records;
       this.total = res.total;
-      console.log("11231", this.tableData);
+      console.log(res);
     },
     async edit(id) {
-      this.isEdit = true
+      this.isEdit = true;
       this.dialogFormVisible = true;
       const { data: res } = await getArticleById(id);
       this.form = res;
@@ -326,7 +342,7 @@ export default {
 </script>
 
 <style>
-.newsManger{
+.newsManger {
   margin-top: 40px;
 }
 .pagination {

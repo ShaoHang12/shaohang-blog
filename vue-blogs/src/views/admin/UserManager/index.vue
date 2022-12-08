@@ -15,11 +15,7 @@
 
       <el-table-column label="角色">
         <template slot-scope="scope">
-          {{
-            scope.row.role == "admin"
-              ? "管理员":"普通用户"
-              
-          }}
+          {{ scope.row.role == "admin" ? "管理员" : "普通用户" }}
         </template>
       </el-table-column>
 
@@ -40,6 +36,12 @@
 
     <div class="block pagination">
       <el-pagination
+        @prev-click="prePage"
+        @next-click="nextPage"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pagenum"
+        :page-size="pagesize"
         background="#f9f9f9"
         layout="prev, pager, next"
         :total="total"
@@ -87,7 +89,6 @@
   </div>
 </template>
 
-
 <script>
 import { Message } from "element-ui";
 import {
@@ -109,13 +110,14 @@ export default {
       formLabelWidth: "120px",
       form: {},
       dialogFormVisible: false,
-      total: 0,
-      queryParam: {
-        pagesize: 10,
-        pagenum: 1,
-      },
+      total: 0, //总共数据条数
+      pagesize: 10, //当前分页条数
+      pagenum: 1, //代表分页器第几页
       tableData: [],
     };
+  },
+  mounted() {
+    this.getUserList();
   },
   methods: {
     //  关闭弹窗
@@ -133,7 +135,28 @@ export default {
       console.log("toUserView");
       this.$router.push({ name: "userManager" });
     },
-
+    //前进
+    prePage() {
+      this.pagenum -= 1;
+      console.log(this.pagenum, "前进");
+      this.getUserList();
+    },
+    //后退
+    nextPage() {
+      this.pagenum += 1;
+      console.log(this.pagenum, "后退");
+      this.getUserList();
+    },
+    // 初始页currentPage、初始每页数据数pagesize和数据data
+    handleSizeChange(size) {
+      this.pagesize = size;
+      this.getUserList();
+    },
+    handleCurrentChange(currentPage) {
+      console.log(currentPage);
+      this.pagenum = currentPage;
+      this.getUserList();
+    },
     // 删除用户信息
     async deleteUser(id) {
       console.log("delete");
@@ -150,9 +173,9 @@ export default {
     },
     // 修改用户信息
     async update() {
-       this.dialogFormVisible = false;
+      this.dialogFormVisible = false;
       if (this.isEdit) {
-        console.log('edit');
+        console.log("edit");
         const res = await updateUser(this.form);
         if (res.status == 200) {
           Message({
@@ -161,10 +184,8 @@ export default {
             duration: 3 * 1000,
           });
         }
-
-    
-      }else{
-        console.log('save');
+      } else {
+        console.log("save");
         const res = await saveUser(this.form);
         if (res.status == 200) {
           Message({
@@ -180,13 +201,13 @@ export default {
     async getUserList() {
       const { data: res } = await fetchList({
         params: {
-          pagesize: this.queryParam.pagesize,
-          pagenum: this.queryParam.pagenum,
+          pagesize: this.pagesize,
+          pagenum: this.pagenum,
         },
       });
       this.tableData = res.records;
       this.total = res.total;
-      console.log("11231", this.tableData);
+      console.log(res);
     },
     async edit(id) {
       this.isEdit = true;
@@ -205,7 +226,6 @@ export default {
 </script>
 
 <style scoped>
-
 .pagination {
   margin-top: 10px;
   background-color: #f9f9f9;

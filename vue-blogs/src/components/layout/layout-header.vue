@@ -90,7 +90,6 @@ export default {
         window.pageYOffset ||
         document.documentElement.scrollTop ||
         document.body.scrollTop;
-        console.log(scrollTop)
       //  当滚动超过 90 时，实现吸顶效果
       if (scrollTop > 90) {
         this.navBarFixed = true;

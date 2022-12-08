@@ -1,7 +1,9 @@
 package com.xsh.blog.business.article.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xsh.blog.business.article.entity.Article;
 import com.xsh.blog.business.article.service.IArticleService;
 import com.xsh.blog.business.article.vo.ArticleVo;
@@ -10,6 +12,8 @@ import com.xsh.blog.business.article_comment.entity.ArticleComment;
 import com.xsh.blog.business.article_comment.service.IArticleCommentService;
 import com.xsh.blog.business.article_love.entity.ArticleLove;
 import com.xsh.blog.business.article_love.service.IArticleLoveService;
+import com.xsh.blog.business.user.dto.PageDto;
+import com.xsh.blog.business.user.entity.User;
 import com.xsh.blog.common.bean.ApiResult;
 import com.xsh.blog.common.bean.BasePage;
 import com.xsh.blog.common.utils.GetArticleCommentList;
@@ -68,24 +72,28 @@ public class ArticleController {
 
     @ApiOperation(value = "获取文章列表")
     @GetMapping("/list")
-    public ApiResult list(ArticleVo param){
+    public ApiResult list(String params){
         try{
             // 显示登录的列表
+            PageDto pageDto = JSONObject.parseObject(params, PageDto.class);
+            Page<Article> objectPage = new Page<>(pageDto.getPagenum(), pageDto.getPagesize());
             String userId = LocalUser.getUser().getUserId();
-            BasePage<ArticleVo> page = articleService.getPage(param);
-            List<ArticleVo> records = page.getRecords();
-            for (ArticleVo record : records) {
+            BasePage<Article> page = articleService.page(objectPage,new Article());
+            List<Article> records = page.getRecords();
+            for (Article record : records) {
                 ArticleLove love = articleLoveService.getOne(Wrappers.<ArticleLove>lambdaQuery().eq(ArticleLove::getArticleId, record.getArticleId()).eq(ArticleLove::getUserId, userId));
                 if (love != null){
-                    record.setLove(true);
+//                    record.setLove(true);
                 }else{
-                    record.setLove(false);
+//                    record.setLove(false);
                 }
             }
             return ApiResult.ok(page);
         }catch (Exception e){
             // 未登录显示列表
-            BasePage<ArticleVo> page = articleService.getPage(param);
+            PageDto pageDto = JSONObject.parseObject(params, PageDto.class);
+            Page<Article> objectPage = new Page<>(pageDto.getPagenum(), pageDto.getPagesize());
+            BasePage<Article> page = articleService.page(objectPage,new Article());
             return ApiResult.ok(page);
         }
     }

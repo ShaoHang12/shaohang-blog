@@ -3,6 +3,8 @@ package com.xsh.blog.common.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xsh.blog.business.article.entity.Article;
+import com.xsh.blog.business.user.entity.User;
 import com.xsh.blog.common.bean.BasePage;
 
 import java.util.List;
@@ -78,4 +80,5 @@ public interface BasicServiceInterface<T> extends IService<T> {
 //    boolean deleteByIds( List<String> ids);
 
     int count(T t);
+
 }

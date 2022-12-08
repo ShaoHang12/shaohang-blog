@@ -131,7 +131,6 @@ export default {
    },
   },
   mounted() {
-    // this.fetchFocus();
     this.fetchList();
   },
 };

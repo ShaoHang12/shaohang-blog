@@ -1,9 +1,12 @@
 package com.xsh.blog.business.user.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xsh.blog.business.user.dto.LoginDto;
+import com.xsh.blog.business.user.dto.PageDto;
 import com.xsh.blog.business.user.dto.RegisterDto;
 import com.xsh.blog.business.user.entity.User;
 import com.xsh.blog.business.user.service.IUserService;
@@ -51,8 +54,12 @@ public class UserController {
 
     @ApiOperation(value = "获取用户列表")
     @GetMapping("/list")
-    public ApiResult list(User param){
-        BasePage<User> page = userService.page(param);
+    public ApiResult list(String params){
+//        Page<User> objectPage = new Page<>(param.getPagenum(), param.getPagesize());
+        PageDto pageDto = JSONObject.parseObject(params, PageDto.class);
+        Page<User> objectPage = new Page<>(pageDto.getPagenum(), pageDto.getPagesize());
+//        BasePage<User> page = userService.page(param);
+        BasePage<User> page = userService.page(objectPage, new User());
         List<User> records = page.getRecords();
         for (User record : records) {
             record.setPassword("******");
